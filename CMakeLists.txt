@@ -3,4 +3,5 @@ project(CPURenderer)
 
 set(CMAKE_CXX_STANDARD 20)
 
-add_executable(CPURenderer main.cpp)
+add_subdirectory(source)
+add_subdirectory(thirdParty/glm)

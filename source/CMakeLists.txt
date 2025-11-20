@@ -1,3 +1,8 @@
-add_executable(CPUPathTracing main.cpp)
+#find all cpp under src folder
+file(GLOB_RECURSE source CONFIGURE_DEPENDS src/*.cpp)
+
+add_executable(CPUPathTracing ${source})
+
+target_include_directories(CPUPathTracing PUBLIC include)
 
 target_link_libraries(CPUPathTracing glm)

@@ -3,7 +3,7 @@
 #include "spin_lock.h"
 #include <vector>
 #include <thread>
-#include <list>
+#include <queue>
 #include <functional>
 
 class Task{
@@ -29,6 +29,6 @@ private:
     std::atomic<int> alive;
     std::vector<std::thread> threads;
 
-    std::list<Task *> tasks;
+    std::queue<Task *> tasks;
     SpinLock spin_lock{};
 };

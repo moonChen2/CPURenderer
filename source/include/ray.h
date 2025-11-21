@@ -1,5 +1,5 @@
 #pragma once
-#include "thirdParty/glm/vec3.hpp"
+#include "thirdParty/glm/glm.hpp"
 
 struct Ray {
     glm::vec3 origin;
@@ -8,6 +8,8 @@ struct Ray {
     glm::vec3 hit(float t) const{
         return origin + direction * t;
     }
+
+    Ray objectFromWorld(const glm::mat4 &object_from_world) const;
 };
 
 

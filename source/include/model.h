@@ -4,7 +4,7 @@
 #include "triangle.h"
 #include <iostream>
 #include <fstream>
-
+#include <sstream>
 
 class Model : public Shape{
 public:

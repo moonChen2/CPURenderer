@@ -5,6 +5,7 @@ void ThreadPool::WorkerThread(ThreadPool *master) {
         Task *task = master->getTask();
         if(task != nullptr){
             task->run();
+            --master->pending_task_count;
         }else{
             std::this_thread::yield();
         }
@@ -13,6 +14,7 @@ void ThreadPool::WorkerThread(ThreadPool *master) {
 
 ThreadPool::ThreadPool(size_t thread_count) {
     alive = 1;
+    pending_task_count = 0;
     if(thread_count == 0){
         thread_count = std::thread::hardware_concurrency();
     }
@@ -25,8 +27,11 @@ ThreadPool::ThreadPool(size_t thread_count) {
 
 
 ThreadPool::~ThreadPool() {
+    //等待所有任务完成
     wait();
     alive = 0;
+    //等待所有线程结束
+    //wait表示活干完 join保证人下班，都满足的时候公司才可以关门
     for(auto &thread : threads){
         thread.join();
     }
@@ -34,8 +39,7 @@ ThreadPool::~ThreadPool() {
 }
 
 void ThreadPool::wait() const {
-    //等待所有任务完成
-    while(!tasks.empty()){
+    while(pending_task_count > 0){
         //当前线程主动放弃CPU调度
         std::this_thread::yield();
     }
@@ -44,7 +48,6 @@ void ThreadPool::wait() const {
 
 void ThreadPool::addTask(Task *task) {
     Guard guard(spin_lock);
-
     tasks.push(task);
 }
 
@@ -80,6 +83,7 @@ void ThreadPool::parallelFor(size_t width, size_t height, const std::function<vo
 
     for (size_t x = 0; x < width; x++) {
         for (size_t y = 0; y < height; y++) {
+            ++pending_task_count;
             tasks.push(new ParallelForTask(x, y, lambda));
         }
     }

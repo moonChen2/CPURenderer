@@ -27,6 +27,7 @@ public:
 
 private:
     std::atomic<int> alive;
+    std::atomic<int> pending_task_count;
     std::vector<std::thread> threads;
 
     std::queue<Task *> tasks;

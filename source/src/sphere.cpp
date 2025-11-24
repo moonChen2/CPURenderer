@@ -6,7 +6,7 @@ std::optional<HitInfo> Sphere::intersect(const Ray &ray, float t_min, float t_ma
     float a = glm::dot(ray.direction, ray.direction);
     float b = 2 * glm::dot(ray.direction, co);
 
-    float c = glm::dot(co,co) - radius * radius;
+    float c = glm::dot(co, co) - radius * radius;
     float delta = b * b - 4 * a * c;
     if (delta < 0) return {};
 
@@ -14,10 +14,10 @@ std::optional<HitInfo> Sphere::intersect(const Ray &ray, float t_min, float t_ma
     if (hit_t < 0) {
         hit_t = (-b + glm::sqrt(delta)) * 0.5 / a;
     }
-    if (hit_t > 0) {
+    if (hit_t > t_min && hit_t < t_max) {
         glm::vec3 hit_point = ray.hit(hit_t);
-        glm::vec3 hit_normal = glm::normalize(hit_point - center);
-        return HitInfo{hit_t, hit_point, hit_normal};
+        glm::vec3 normal = glm::normalize(hit_point - center);
+        return HitInfo { hit_t, hit_point, normal };
     }
     //交点均在光线的逆方向上
     return {};

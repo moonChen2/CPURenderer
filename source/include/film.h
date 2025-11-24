@@ -3,6 +3,12 @@
 #include <vector>
 #include <filesystem>
 #include <thirdParty/glm/glm.hpp>
+#include "rgb.h"
+
+struct Pixel{
+    glm::vec3 color {0,0,0};
+    int sample_count {0};
+};
 
 //相机胶片 存储每个pixel颜色
 class Film {
@@ -13,16 +19,18 @@ public:
 
     void save(const std::filesystem::path &filename);
 
-    glm::vec3 getPixel(size_t x, size_t y) {
+    Pixel getPixel(size_t x, size_t y) {
         return pixels[y * width + x];
     };
 
-    void setPixel(size_t x, size_t y, const glm::vec3 &color) {
-        pixels[y * width + x] = color;
+    void addSample(size_t x, size_t y, const glm::vec3 &color){
+        pixels[y * width + x].color += color;
+        pixels[y * width + x].sample_count ++;
     }
 
 private:
-    std::vector<glm::vec3> pixels;
+    // 物理意义上的光照强度
+    std::vector<Pixel> pixels;
 };
 
 

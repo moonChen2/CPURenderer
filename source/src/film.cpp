@@ -1,9 +1,9 @@
 #include <fstream>
 #include "film.h"
-
+#include <iostream>
 
 Film::Film(size_t width, size_t height) : width(width), height(height) {
-    pixels.resize(width *height);
+    pixels.resize(width * height);
 }
 
 
@@ -19,10 +19,13 @@ void Film::save(const std::filesystem::path &filename) {
 
     for(size_t y = 0; y < height; y++){
         for(size_t x = 0; x < width; x++){
-            const glm::vec3 &color = getPixel(x,y);
-            glm::ivec3 color_i = glm::clamp(color * 255.f, 0.f, 255.f);
+            //gama correction
+            auto pixel = getPixel(x,y);
+            std::cout<<pixel.color.r<<" "<<pixel.color.g<<" "<<pixel.color.b<<" "<<std::endl;
+
+            RGB rgb{pixel.color / static_cast<float>(pixel.sample_count)};
             //r8g8b8
-            file<<static_cast<uint8_t>(color_i.x)<<static_cast<uint8_t>(color_i.y)<<static_cast<uint8_t>(color_i.z);
+            file<<static_cast<uint8_t>(rgb.r)<<static_cast<uint8_t>(rgb.g)<<static_cast<uint8_t>(rgb.b);
         }
     }
 

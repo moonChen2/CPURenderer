@@ -1,17 +1,17 @@
-#include <iostream>
-#include <random>
-#include "camera.h"
-#include "thread_pool.h"
-#include "film.h"
-#include "sphere.h"
-#include "plane.h"
-#include "scene.h"
-#include "model.h"
-#include "frame.h"
+#include "camera/camera.h"
+#include "thread/thread_pool.h"
+#include "camera/film.h"
+#include "shape/sphere.h"
+#include "shape/plane.h"
+#include "shape/scene.h"
+#include "shape/model.h"
+#include "renderer/normal_renderer.h"
+#include "renderer/simple_rt_renderer.h"
+
 
 int main(){
+
     std::atomic<int> count = 0;
-    ThreadPool thread_pool {};
 
     Film film {192 * 4,108 * 4};
     Camera camera {film, {-3.6,0,0},{0,0,0},45};
@@ -49,57 +49,13 @@ int main(){
     );
     scene.addShape(plane, { RGB(120, 204, 157) }, { 0, -0.5, 0 });
 
-    std::mt19937 gen(23451334);
-    std::uniform_real_distribution<float> uniform(-1,1);
+    NormalRenderer normal_renderer {camera, scene};
+    normal_renderer.render(1, "../../normal.ppm");
 
-    int spp = 128;
+    film.clear();
 
-    thread_pool.parallelFor(film.width, film.height, [&](size_t x, size_t y) {
-        for (int i = 0; i < spp; i ++){
-            auto ray = camera.generateRay({x,y}, {abs(uniform(gen)),abs(uniform(gen))});
-            glm::vec3 beta = {1,1,1};
-            glm::vec3 color = {0,0,0};
-            while(true){
-                auto hit_info = scene.intersect(ray);
+    SimpleRTRenderer simple_renderer {camera, scene};
+    simple_renderer.render(32, "../../simple.ppm");
 
-                if (hit_info.has_value()) {
-                    color += beta * hit_info->material->emissive;
-                    beta *= hit_info->material->albedo;
-
-                    ray.origin = hit_info->hit_point;
-
-                    Frame frame(hit_info->normal);
-                    glm::vec3 light_direction;
-                    if (hit_info->material->is_specular) {
-                        glm::vec3 view_direction = frame.localFromWorld(-ray.direction);
-                        light_direction = { -view_direction.x, view_direction.y, -view_direction.z };
-                    } else {
-                        //diffuse
-                        //accept or refuse
-                        do {
-                            light_direction = { uniform(gen), uniform(gen), uniform(gen) };
-                        } while(glm::length(light_direction) > 1);
-                        if (light_direction.y < 0) {
-                            light_direction.y = -light_direction.y;
-                        }
-                    }
-                    ray.direction = frame.worldFromLocal(light_direction);
-                }else break;
-            }
-            film.addSample(x, y, color);
-        }
-
-        //progress bar
-        int n = ++count;
-        if (n % film.width == 0) {
-            std::cout<<static_cast<float>(n) / (film.width * film.height)<<std::endl;
-            //std::cout<<count<<std::endl;
-        }
-    });
-
-    thread_pool.wait();
-
-    film.save("../../test.ppm");
-    //threadPool.addTask(new SimpleTask());
 }
 

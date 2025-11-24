@@ -1,4 +1,4 @@
-#include "model.h"
+#include "shape/model.h"
 
 Model::Model(const std::filesystem::path &filename) {
     // v 22 12 12

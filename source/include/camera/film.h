@@ -3,7 +3,7 @@
 #include <vector>
 #include <filesystem>
 #include <thirdParty/glm/glm.hpp>
-#include "rgb.h"
+#include "util/rgb.h"
 
 struct Pixel{
     glm::vec3 color {0,0,0};
@@ -28,6 +28,7 @@ public:
         pixels[y * width + x].sample_count ++;
     }
 
+    void clear(){ pixels.clear(); pixels.resize(width * height); }
 private:
     // 物理意义上的光照强度
     std::vector<Pixel> pixels;

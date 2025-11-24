@@ -1,6 +1,6 @@
 #pragma once
 
-#include "camera.h"
+#include "camera/camera.h"
 #include <thirdParty/glm/ext/matrix_clip_space.hpp>
 #include <thirdParty/glm/ext/matrix_transform.hpp>
 

@@ -1,5 +1,5 @@
 #include <fstream>
-#include "film.h"
+#include "camera/film.h"
 #include <iostream>
 
 Film::Film(size_t width, size_t height) : width(width), height(height) {
@@ -21,7 +21,6 @@ void Film::save(const std::filesystem::path &filename) {
         for(size_t x = 0; x < width; x++){
             //gama correction
             auto pixel = getPixel(x,y);
-            std::cout<<pixel.color.r<<" "<<pixel.color.g<<" "<<pixel.color.b<<" "<<std::endl;
 
             RGB rgb{pixel.color / static_cast<float>(pixel.sample_count)};
             //r8g8b8

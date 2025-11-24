@@ -1,4 +1,4 @@
-#include "ray.h"
+#include "camera/ray.h"
 
 Ray Ray::objectFromWorld(const glm::mat4 &object_from_world) const {
 

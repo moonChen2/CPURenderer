@@ -33,3 +33,6 @@ private:
     std::queue<Task *> tasks;
     SpinLock spin_lock{};
 };
+
+
+extern ThreadPool thread_pool;

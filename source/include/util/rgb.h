@@ -5,6 +5,7 @@
 //约定rgb为0-255的整数
 class RGB{
 public:
+    //非线性空间 0 - 255
     int r,g,b;
 
     RGB(int r, int g, int b) : r(r),g(g),b(b){}

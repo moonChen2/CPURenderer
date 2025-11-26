@@ -30,7 +30,7 @@ public:
 
     void clear(){ pixels.clear(); pixels.resize(width * height); }
 private:
-    // 物理意义上的光照强度
+    // 物理意义上的光照强度，线性空间，0-1
     std::vector<Pixel> pixels;
 };
 

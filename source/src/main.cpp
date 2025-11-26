@@ -10,9 +10,7 @@
 
 
 int main(){
-
-    std::atomic<int> count = 0;
-
+    
     Film film {192 * 4,108 * 4};
     Camera camera {film, {-3.6,0,0},{0,0,0},45};
     Sphere sphere{
@@ -55,7 +53,32 @@ int main(){
     film.clear();
 
     SimpleRTRenderer simple_renderer {camera, scene};
-    simple_renderer.render(32, "../../simple.ppm");
+    simple_renderer.render(128, "../../simple.ppm");
 
 }
 
+// Debug Model
+// Load model 43ms
+// parallelFor 200ms
+// Film::save 101ms
+// render 128spp 992444ms
+
+
+// Release Model
+// Load model 40ms
+// parallelFor 100ms
+// Film::save 76ms
+// render 128spp 94363ms
+
+// Change parallelFor
+// parallelFor 0ms
+
+// Change Film::save
+// Film::save 5ms
+
+// Add Bounds
+// Load model 42 ms
+// render 128spp 50519 ms
+
+// Add rapid obj
+// Load model 2 ms

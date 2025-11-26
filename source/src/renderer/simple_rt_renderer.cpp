@@ -10,6 +10,7 @@ glm::vec3 SimpleRTRenderer::renderPixel(const glm::ivec2 &pixel_coord) {
         auto hit_info = scene.intersect(ray);
 
         if (hit_info.has_value()) {
+            //actually I think it should be ended when hit the light
             color += beta * hit_info->material->emissive;
             beta *= hit_info->material->albedo;
 

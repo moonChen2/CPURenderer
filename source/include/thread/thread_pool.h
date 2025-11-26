@@ -9,6 +9,8 @@
 class Task{
 public:
     virtual void run() = 0;
+
+    virtual ~Task() = default;
 };
 
 //仅支持主线程添加任务
@@ -23,7 +25,7 @@ public:
     void addTask(Task *task);
     Task *getTask();
 
-    void parallelFor(size_t width, size_t height, const std::function<void(size_t, size_t)> &lambda);
+    void parallelFor(size_t width, size_t height, const std::function<void(size_t, size_t)> &lambda, bool complex = true);
 
 private:
     std::atomic<int> alive;

@@ -90,7 +90,7 @@ private:
 
 //并行for循环
 void ThreadPool::parallelFor(size_t width, size_t height, const std::function<void(size_t, size_t)> &lambda, bool complex) {
-    PROFILE("parallelFor")
+    //PROFILE("parallelFor")
     Guard guard(spin_lock);
     //tile based 每个像素new 一个任务太多了
     //改为1个线程16个任务

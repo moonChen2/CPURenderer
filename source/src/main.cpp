@@ -21,31 +21,31 @@ int main(){
         {0,0,0},
         {0,1,0}
     };
-    Model model {"../../models/simple_dragon.obj"};
+    Model model {"../../models/dragon_87k.obj"};
 
     Scene scene {};
     scene.addShape(
             model,
             { RGB(202, 159, 117) },
             { 0, 0, 0 },
-            { 1, 3, 2 }
+            { 3, 3, 3 }
     );
-    scene.addShape(
-            sphere,
-            { { 1, 1, 1 }, false, RGB(255, 128, 128) },
-            { 0, 0, 2.5 }
-    );
-    scene.addShape(
-            sphere,
-            { { 1, 1, 1 }, false, RGB(128, 128, 255) },
-            { 0, 0, -2.5 }
-    );
-    scene.addShape(
-            sphere,
-            { { 1, 1, 1 }, true },
-            { 3, 0.5, -2 }
-    );
-    scene.addShape(plane, { RGB(120, 204, 157) }, { 0, -0.5, 0 });
+    // scene.addShape(
+    //         sphere,
+    //         { { 1, 1, 1 }, false, RGB(255, 128, 128) },
+    //         { 0, 0, 2.5 }
+    // );
+    // scene.addShape(
+    //         sphere,
+    //         { { 1, 1, 1 }, false, RGB(128, 128, 255) },
+    //         { 0, 0, -2.5 }
+    // );
+    // scene.addShape(
+    //         sphere,
+    //         { { 1, 1, 1 }, true },
+    //         { 3, 0.5, -2 }
+    // );
+    // scene.addShape(plane, { RGB(120, 204, 157) }, { 0, -0.5, 0 });
 
     NormalRenderer normal_renderer {camera, scene};
     normal_renderer.render(1, "../../normal.ppm");
@@ -78,7 +78,16 @@ int main(){
 
 // Add Bounds
 // Load model 42 ms
-// render 128spp 50519 ms
+// render 128spp 26320 ms
 
 // Add rapid obj
 // Load model 2 ms
+
+// Add BVH
+// render 128spp 4770 ms
+
+// dragon 87k
+// origin render 128spp 3644 ms
+// flatten render 128spp 4221 ms
+// triangle index render 128spp 4427 ms
+// 32bit pack  render 128spp 4244 ms

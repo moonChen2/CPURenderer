@@ -11,7 +11,7 @@ Film::Film(size_t width, size_t height) : width(width), height(height) {
 
 
 void Film::save(const std::filesystem::path &filename) {
-    PROFILE("Save to " + filename.string())
+    //PROFILE("Save to " + filename.string())
     //PPM
     //P6
     //1920 1080

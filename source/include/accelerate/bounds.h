@@ -6,7 +6,7 @@
 
 struct Bounds {
 
-    Bounds() : b_min(0.0), b_max(0.0) {}
+    Bounds() : b_min(std::numeric_limits<float>::infinity()), b_max(-std::numeric_limits<float>::infinity()) {}
 
     Bounds(const glm::vec3 &b_min, const glm::vec3 &b_max) : b_min(b_min), b_max(b_max) {}
 
@@ -16,6 +16,10 @@ struct Bounds {
     }
 
     bool hasIntersection(const Ray &ray, float t_min, float t_max) const;
+
+    glm::vec3 diagonal() const {
+        return b_max - b_min;
+    }
 
     glm::vec3 b_min;
     glm::vec3 b_max;

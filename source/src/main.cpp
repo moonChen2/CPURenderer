@@ -7,6 +7,7 @@
 #include "shape/model.h"
 #include "renderer/normal_renderer.h"
 #include "renderer/simple_rt_renderer.h"
+#include "renderer/debug_renderer.h"
 
 
 int main(){
@@ -21,7 +22,7 @@ int main(){
         {0,0,0},
         {0,1,0}
     };
-    Model model {"../../models/dragon_87k.obj"};
+    Model model {"../../models/dragon_871k.obj"};
 
     Scene scene {};
     scene.addShape(
@@ -50,7 +51,12 @@ int main(){
     NormalRenderer normal_renderer {camera, scene};
     normal_renderer.render(1, "../../normal.ppm");
 
-    film.clear();
+    BoundsTestCountRenderer btc_renderer { camera, scene };
+    btc_renderer.render(1, "../../BTC.ppm");
+    TriangleTestCountRenderer ttc_renderer { camera, scene };
+    ttc_renderer.render(1, "../../TTC.ppm");
+    BoundsDepthRenderer bd_renderer { camera, scene };
+    bd_renderer.render(1, "../../BD.ppm");
 
     SimpleRTRenderer simple_renderer {camera, scene};
     simple_renderer.render(128, "../../simple.ppm");
@@ -91,3 +97,36 @@ int main(){
 // flatten render 128spp 4221 ms
 // triangle index render 128spp 4427 ms
 // 32bit pack  render 128spp 4244 ms
+// *bbx iteration direction, left->right or right->left ?
+// inv direction render 128spp
+
+//Without SAH
+//Total Node Count: 142643
+//Leaf Node Count: 71322
+//Triangle Count: 87130
+//Mean Leaf Node Triangle Count: 1.22164
+//Max Leaf Node Triangle Count: 23
+
+//With SAH
+//Total Node Count: 164067
+//Leaf Node Count: 82034
+//Triangle Count: 87130
+//Mean Leaf Node Triangle Count: 1.06212
+//Max Leaf Node Triangle Count: 8
+
+//3 axis SAH
+//Total Node Count: 174195
+//Leaf Node Count: 87098
+//Triangle Count: 87130
+//Mean Leaf Node Triangle Count: 1.00037
+//Max Leaf Node Triangle Count: 3
+
+
+//871K Dragon BVH
+//Total Node Count: 1742419
+//Leaf Node Count: 871210
+//Triangle Count: 871306
+//Mean Leaf Node Triangle Count: 1.00011
+//Max Leaf Node Triangle Count: 3
+//render 128spp 4770 ms
+//Load Model 8367 ms

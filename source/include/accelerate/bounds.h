@@ -17,8 +17,16 @@ struct Bounds {
 
     bool hasIntersection(const Ray &ray, float t_min, float t_max) const;
 
+    bool hasIntersection(const Ray &ray, const glm::vec3 &inv_direction, float t_min, float t_max) const;
+
     glm::vec3 diagonal() const {
         return b_max - b_min;
+    }
+
+    float area() const{
+        auto diag = diagonal();
+
+        return 2.f * (diag.x * diag.y + diag.y * diag.z + diag.x * diag.z);
     }
 
     glm::vec3 b_min;

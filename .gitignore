@@ -24,3 +24,14 @@ CMakeUserPresets.json
 normal.ppm
 simple.ppm
 simple1.ppm
+test.ppm
+.idea/CPURenderer.iml
+.idea/misc.xml
+.idea/vcs.xml
+.DS_Store
+.DS_Store
+.DS_Store
+BD.ppm
+BTC.ppm
+*.ppm
+test.ppm

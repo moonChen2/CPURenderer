@@ -9,6 +9,8 @@ void BaseRenderer::render(size_t spp, const std::filesystem::path &filename) {
     PROFILE("Render " + std::to_string(spp) + "spp " + filename.string())
     size_t current_spp = 0, increase = 1;
     auto &film = camera.getFilm();
+    //渲染前先把上次的结果清空
+    film.clear();
     Progress progress(film.width * film.height * spp);
     //current spp 0 1 2 4 8 16
     //increase    1 1 2 4 8 16

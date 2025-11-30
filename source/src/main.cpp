@@ -29,24 +29,24 @@ int main(){
             model,
             { RGB(202, 159, 117) },
             { 0, 0, 0 },
-            { 3, 3, 3 }
+            { 1, 3, 2 }
     );
-    // scene.addShape(
-    //         sphere,
-    //         { { 1, 1, 1 }, false, RGB(255, 128, 128) },
-    //         { 0, 0, 2.5 }
-    // );
-    // scene.addShape(
-    //         sphere,
-    //         { { 1, 1, 1 }, false, RGB(128, 128, 255) },
-    //         { 0, 0, -2.5 }
-    // );
-    // scene.addShape(
-    //         sphere,
-    //         { { 1, 1, 1 }, true },
-    //         { 3, 0.5, -2 }
-    // );
-    // scene.addShape(plane, { RGB(120, 204, 157) }, { 0, -0.5, 0 });
+     scene.addShape(
+             sphere,
+             { { 1, 1, 1 }, false, RGB(255, 128, 128) },
+             { 0, 0, 2.5 }
+     );
+     scene.addShape(
+             sphere,
+             { { 1, 1, 1 }, false, RGB(128, 128, 255) },
+             { 0, 0, -2.5 }
+     );
+     scene.addShape(
+             sphere,
+             { { 1, 1, 1 }, true },
+             { 3, 0.5, -2 }
+     );
+     scene.addShape(plane, { RGB(120, 204, 157) }, { 0, -0.5, 0 });
 
     NormalRenderer normal_renderer {camera, scene};
     normal_renderer.render(1, "../../normal.ppm");
@@ -130,3 +130,22 @@ int main(){
 //Max Leaf Node Triangle Count: 3
 //render 128spp 4770 ms
 //Load Model 8367 ms
+
+
+//871K Dragon BVH bucket
+//Total Node Count: 1742425
+//Leaf Node Count: 871213
+//Triangle Count: 871306
+//Mean Leaf Node Triangle Count: 1.00011
+//Max Leaf Node Triangle Count: 3
+//render 128spp 5990 ms
+//Load Model 1670 ms
+
+//871K Dragon BVH Change Thread Pool
+//Load Model 1657 ms
+
+//BVH Node Allocator
+//Load Model 1870 ms
+
+//reserve vector
+//Load Model 1666 ms

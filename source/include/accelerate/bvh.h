@@ -45,6 +45,28 @@ struct BVHState{
     }
 };
 
+class BVHTreeNodeAllocator{
+public:
+    BVHTreeNodeAllocator() : ptr(4096){}
+    ~BVHTreeNodeAllocator(){
+        for(auto *nodes : nodes_list){
+            delete[] nodes;
+        }
+        nodes_list.clear();
+    }
+
+    BVHTreeNode *allocate(){
+        if(ptr == 4096){
+            nodes_list.push_back(new BVHTreeNode[4096]);
+            ptr = 0;
+        }
+        return &(nodes_list.back()[ptr++]);
+    }
+private:
+    size_t ptr;
+    std::vector<BVHTreeNode *> nodes_list;
+};
+
 class BVH : public Shape{
 public:
     void build(std::vector<Triangle> &&triangles);
@@ -53,6 +75,7 @@ private:
     void recursiveSplit(BVHTreeNode *node, BVHState &state);
     size_t recursiveFlatten(BVHTreeNode *node);
 private:
+    BVHTreeNodeAllocator allocator{};
     std::vector<BVHNode > nodes;
     std::vector<Triangle> ordered_triangles;
 };

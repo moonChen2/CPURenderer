@@ -2,7 +2,7 @@
 #include "util/debug_marco.h"
 #include <iostream>
 void BVH::build(std::vector<Triangle> &&triangles) {
-    BVHTreeNode *root = new BVHTreeNode {};
+    BVHTreeNode *root = allocator.allocate();
     root->triangles = std::move(triangles);
     root->updateBounds();
     root->depth = 1;
@@ -33,59 +33,92 @@ void BVH::recursiveSplit(BVHTreeNode *node, BVHState &state) {
 
     auto diag = node->bounds.diagonal();
     float min_cost = std::numeric_limits<float>::infinity();
-    std::vector<Triangle> child0_triangles, child1_triangles;
+    size_t min_split_index = 0;                                 //bucket index
+    //cost最小的时候的包围盒
+    Bounds min_child0_bounds{}, min_child1_bounds{};
+    //cost最小的时候两个子节点三角形数量
+    size_t min_child0_triangle_count = 0, min_child1_triangle_count = 0;
+    constexpr size_t bucket_count = 12;
+    std::vector<size_t> triangle_indices_buckets[3][bucket_count] = {};
     for(size_t axis = 0; axis < 3; axis++){
         // SAH
-        for(size_t i = 0; i < 11; i++){
-            float mid = node->bounds.b_min[axis] + diag[axis] * (i + 1.f) / 12.f;
+        // bucket speed up
+        Bounds bounds_buckets[bucket_count] = {};
+        size_t triangle_count_buckets[bucket_count] = {};
+        size_t triangle_idx = 0;
 
-            Bounds child0_bounds{}, child1_bounds{};
-            std::vector<Triangle> child0_triangles_temp, child1_triangles_temp;
-            for (const auto &triangle : node->triangles) {
-                if (triangle.p0[axis] + triangle.p1[axis] + triangle.p2[axis] < mid * 3.f) {
-                    child0_bounds.expend(triangle.p0);
-                    child0_bounds.expend(triangle.p1);
-                    child0_bounds.expend(triangle.p2);
-                    child0_triangles_temp.push_back(triangle);
-                }else {
-                    child1_bounds.expend(triangle.p0);
-                    child1_bounds.expend(triangle.p1);
-                    child1_bounds.expend(triangle.p2);
-                    child1_triangles_temp.push_back(triangle);
+        for(const auto &triangle : node->triangles){
+            auto triangle_center = (triangle.p0[axis] + triangle.p1[axis] + triangle.p2[axis] ) / 3.f;
+            size_t bucket_idx = glm::clamp<size_t>(
+                    glm::floor((triangle_center - node->bounds.b_min[axis]) * bucket_count / diag[axis]),
+                    0, bucket_count - 1 );
+
+            bounds_buckets[bucket_idx].expend(triangle.p0);
+            bounds_buckets[bucket_idx].expend(triangle.p1);
+            bounds_buckets[bucket_idx].expend(triangle.p2);
+            triangle_count_buckets[bucket_idx] ++;
+            triangle_indices_buckets[axis][bucket_idx].push_back(triangle_idx);
+            triangle_idx++;
+        }
+
+        Bounds left_bounds = bounds_buckets[0];
+        size_t left_triangle_count = triangle_count_buckets[0];
+        for(size_t i = 1; i <= bucket_count - 1; i++){
+            Bounds right_bounds {};
+            size_t right_triangle_count = 0;
+            for(size_t j = bucket_count - 1; j>=i; j--){
+                right_bounds.expend(bounds_buckets[j]);
+                right_triangle_count += triangle_count_buckets[j];
+            }
+            if(right_triangle_count == 0){
+                break;
+            }
+            if(left_triangle_count != 0){
+                float cost = left_triangle_count * left_bounds.area() + right_triangle_count * right_bounds.area();
+                if(cost < min_cost){
+                    min_cost = cost;
+                    node->split_axis = axis;
+                    min_split_index = i;
+                    min_child0_bounds = left_bounds;
+                    min_child1_bounds = right_bounds;
+                    min_child0_triangle_count = left_triangle_count;
+                    min_child1_triangle_count = right_triangle_count;
                 }
             }
-
-            if(child0_triangles_temp.empty() || child1_triangles_temp.empty()){
-                continue;
-            }
-
-            float cost = child0_bounds.area() * child0_triangles_temp.size() + child1_bounds.area() * child1_triangles_temp.size();
-            if(cost < min_cost){
-                min_cost = cost;
-                child0_triangles = std::move(child0_triangles_temp);
-                child1_triangles = std::move(child1_triangles_temp);
-                node->split_axis = axis;
-            }
+            left_bounds.expend(bounds_buckets[i]);
+            left_triangle_count += triangle_count_buckets[i];
         }
+
     }
 
-    if (child0_triangles.empty() || child1_triangles.empty()) {
+    if(min_split_index == 0) {
         state.addLeafNode(node);
-        return ;
+        return;
     }
 
-    auto *child0 = new BVHTreeNode {};
-    auto *child1 = new BVHTreeNode {};
+    auto *child0 = allocator.allocate();
+    auto *child1 = allocator.allocate();
     node->children[0] = child0;
     node->children[1] = child1;
+
+    child0->triangles.reserve(min_child0_triangle_count);
+    child1->triangles.reserve(min_child1_triangle_count);
+    for(size_t i = 0; i < min_split_index; i++){
+        for(size_t idx : triangle_indices_buckets[node->split_axis][i]){
+            child0->triangles.push_back(node->triangles[idx]);
+        }
+    }
+    for(size_t i = min_split_index; i < bucket_count; i++){
+        for(size_t idx : triangle_indices_buckets[node->split_axis][i]){
+            child1->triangles.push_back(node->triangles[idx]);
+        }
+    }
     node->triangles.clear();
     node->triangles.shrink_to_fit();
     child0->depth = node->depth + 1;
     child1->depth = node->depth + 1;
-    child0->triangles = std::move(child0_triangles);
-    child1->triangles = std::move(child1_triangles);
-    child0->updateBounds();
-    child1->updateBounds();
+    child0->bounds = min_child0_bounds;
+    child1->bounds = min_child1_bounds;
 
     recursiveSplit(child0, state);
     recursiveSplit(child1, state);

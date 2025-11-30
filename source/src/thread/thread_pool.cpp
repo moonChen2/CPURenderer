@@ -8,6 +8,11 @@ ThreadPool thread_pool {};
 
 void ThreadPool::WorkerThread(ThreadPool *master) {
     while(master->alive == 1){
+        //bvh构建的时候让当前线程不要去抢CPU资源
+        if(master->tasks.empty()){
+            std::this_thread::sleep_for(std::chrono::milliseconds(2));
+            continue;
+        }
         Task *task = master->getTask();
         if(task != nullptr){
             task->run();

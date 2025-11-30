@@ -14,7 +14,10 @@ struct Bounds {
         b_min = glm::min(b_min, pos);
         b_max = glm::max(b_max, pos);
     }
-
+    void expend(const Bounds &bounds) {
+        b_min = glm::min(b_min, bounds.b_min);
+        b_max = glm::max(b_max, bounds.b_max);
+    }
     bool hasIntersection(const Ray &ray, float t_min, float t_max) const;
 
     bool hasIntersection(const Ray &ray, const glm::vec3 &inv_direction, float t_min, float t_max) const;

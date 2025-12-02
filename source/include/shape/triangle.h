@@ -26,6 +26,14 @@ struct Triangle : public Shape {
 
     std::optional<HitInfo> intersect(const Ray& ray, const float tmin, const float tmax) const override;
 
+    Bounds getBounds() const override {
+        Bounds bounds;
+        bounds.expend(p0);
+        bounds.expend(p1);
+        bounds.expend(p2);
+        return bounds;
+    }
+
     glm::vec3 p0, p1, p2;
     glm::vec3 n0, n1, n2;
 

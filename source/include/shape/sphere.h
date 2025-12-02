@@ -10,4 +10,8 @@ struct Sphere : public Shape{
     float radius;
 
     std::optional<HitInfo> intersect(const Ray &ray, float t_min, float t_max) const override;
+
+    Bounds getBounds() const override {
+        return {center - radius, center + radius};
+    }
 };

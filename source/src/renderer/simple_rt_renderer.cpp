@@ -1,6 +1,7 @@
 #include "renderer/simple_rt_renderer.h"
 #include "util/frame.h"
 
+//1 spp
 glm::vec3 SimpleRTRenderer::renderPixel(const glm::ivec2 &pixel_coord) {
     auto ray = camera.generateRay(pixel_coord, {rng.uniform(),rng.uniform()});
     glm::vec3 beta = {1,1,1};

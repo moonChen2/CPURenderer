@@ -40,6 +40,8 @@ void BVH::recursiveSplit(BVHTreeNode *node, BVHState &state) {
     //cost最小的时候两个子节点三角形数量
     size_t min_child0_triangle_count = 0, min_child1_triangle_count = 0;
     constexpr size_t bucket_count = 12;
+    //三维数组，每个轴的每个bucket中的三角形index
+    //bucket_count必须是编译期常量
     std::vector<size_t> triangle_indices_buckets[3][bucket_count] = {};
     for(size_t axis = 0; axis < 3; axis++){
         // SAH
@@ -47,7 +49,7 @@ void BVH::recursiveSplit(BVHTreeNode *node, BVHState &state) {
         Bounds bounds_buckets[bucket_count] = {};
         size_t triangle_count_buckets[bucket_count] = {};
         size_t triangle_idx = 0;
-
+        //三角形放入对应的bucket
         for(const auto &triangle : node->triangles){
             auto triangle_center = (triangle.p0[axis] + triangle.p1[axis] + triangle.p2[axis] ) / 3.f;
             size_t bucket_idx = glm::clamp<size_t>(
@@ -61,12 +63,13 @@ void BVH::recursiveSplit(BVHTreeNode *node, BVHState &state) {
             triangle_indices_buckets[axis][bucket_idx].push_back(triangle_idx);
             triangle_idx++;
         }
-
+        //滚动更新cost
         Bounds left_bounds = bounds_buckets[0];
         size_t left_triangle_count = triangle_count_buckets[0];
         for(size_t i = 1; i <= bucket_count - 1; i++){
             Bounds right_bounds {};
             size_t right_triangle_count = 0;
+            //计算右半边
             for(size_t j = bucket_count - 1; j>=i; j--){
                 right_bounds.expend(bounds_buckets[j]);
                 right_triangle_count += triangle_count_buckets[j];
@@ -104,6 +107,7 @@ void BVH::recursiveSplit(BVHTreeNode *node, BVHState &state) {
 
     child0->triangles.reserve(min_child0_triangle_count);
     child1->triangles.reserve(min_child1_triangle_count);
+    //min_split_index之前的bucket中的三角形全部加入
     for(size_t i = 0; i < min_split_index; i++){
         for(size_t idx : triangle_indices_buckets[node->split_axis][i]){
             child0->triangles.push_back(node->triangles[idx]);
@@ -139,6 +143,7 @@ size_t BVH::recursiveFlatten(BVHTreeNode *node) {
         recursiveFlatten(node->children[0]);
         nodes[idx].child1_index = recursiveFlatten(node->children[1]);
     } else {
+        //记录起点
         nodes[idx].triangle_index = ordered_triangles.size();
         for (const auto &triangle: node->triangles) {
             ordered_triangles.push_back(triangle);
@@ -203,6 +208,7 @@ std::optional<HitInfo> BVH::intersect(const Ray &ray, float t_min, float t_max) 
                     closest_hit_Info = hit_info;
                 }
             }
+            //可能和当前包围盒中的三角形都没有交点，遍历下一个包围盒
             if (ptr == stack.begin()) {
                 break;
             }

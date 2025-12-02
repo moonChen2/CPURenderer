@@ -1,5 +1,4 @@
 #include "camera/camera.h"
-#include "thread/thread_pool.h"
 #include "camera/film.h"
 #include "shape/sphere.h"
 #include "shape/plane.h"
@@ -13,6 +12,7 @@
 int main(){
     
     Film film {192 * 4,108 * 4};
+    film.resize(1920, 1080);
     Camera camera { film, { -12, 5, -12 }, { 0, 0, 0 }, 45 };
     Sphere sphere{
         {0,0,0},
@@ -63,10 +63,10 @@ int main(){
     NormalRenderer normal_renderer {camera, scene};
     normal_renderer.render(1, "../../normal.ppm");
 
-    BoundsTestCountRenderer btc_renderer { camera, scene };
-    btc_renderer.render(1, "../../BTC.ppm");
-    TriangleTestCountRenderer ttc_renderer { camera, scene };
-    ttc_renderer.render(1, "../../TTC.ppm");
+    // BoundsTestCountRenderer btc_renderer { camera, scene };
+    // btc_renderer.render(1, "../../BTC.ppm");
+    // TriangleTestCountRenderer ttc_renderer { camera, scene };
+    // ttc_renderer.render(1, "../../TTC.ppm");
 
     SimpleRTRenderer simple_renderer {camera, scene};
     simple_renderer.render(128, "../../simple.ppm");

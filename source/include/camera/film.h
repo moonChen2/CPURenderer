@@ -23,6 +23,13 @@ public:
         return pixels[y * width + x];
     };
 
+    void resize(size_t width, size_t height) {
+        this->width = width;
+        this->height = height;
+        clear();
+        pixels.resize(width * height);
+    }
+
     void addSample(size_t x, size_t y, const glm::vec3 &color){
         pixels[y * width + x].color += color;
         pixels[y * width + x].sample_count ++;

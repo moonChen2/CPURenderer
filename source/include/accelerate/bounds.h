@@ -37,6 +37,14 @@ struct Bounds {
     }
 
     //好帅的位运算
+    // 0	000	(b_min.x, b_min.y, b_min.z)	左下后（Left-Bottom-Back）
+    // 1	001	(b_max.x, b_min.y, b_min.z)	右下后
+    // 2	010	(b_min.x, b_max.y, b_min.z)	左上后
+    // 3	011	(b_max.x, b_max.y, b_min.z)	右上后
+    // 4	100	(b_min.x, b_min.y, b_max.z)	左下前
+    // 5	101	(b_max.x, b_min.y, b_max.z)	右下前
+    // 6	110	(b_min.x, b_max.y, b_max.z)	左上前
+    // 7	111	(b_max.x, b_max.y, b_max.z)	右上前（默认初始值）
     glm::vec3 getCorner(size_t idx) const {
         auto corner = b_max;
         if ((idx & 0b1) == 0) corner.x = b_min.x;

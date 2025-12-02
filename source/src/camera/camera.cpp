@@ -22,8 +22,7 @@ Ray Camera::generateRay(const glm::ivec2 &pixel_coord, const glm::vec2 &offset) 
     ndc.y = 1.f - ndc.y;
     ndc = 2.f * ndc - 1.f;
 
-    //clip -> ndc
-    // x y 0 near -> x/near y/near 0 1
+    //ndc->clip https://zhuanlan.zhihu.com/p/65969162
     //近平面是1所以可以这么写
     glm::vec4 clip{ndc, 0, 1};
     glm::vec3 world = world_from_camera * camera_from_clip * clip;

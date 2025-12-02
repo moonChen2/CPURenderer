@@ -155,7 +155,7 @@ size_t SceneBVH::recursiveFlatten(SceneBVHTreeNode *node) {
 
 std::optional<HitInfo> SceneBVH::intersect(const Ray &ray, float t_min, float t_max) const {
     std::optional<HitInfo> closest_hit_info;
-    const ShapeInstance *closest_instance = nullptr;
+    ShapeInstance const *closest_instance = nullptr;
 
     DEBUG_LINE(size_t bounds_test_count = 0)
 

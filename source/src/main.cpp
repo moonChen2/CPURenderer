@@ -7,12 +7,12 @@
 #include "renderer/normal_renderer.h"
 #include "renderer/simple_rt_renderer.h"
 #include "renderer/debug_renderer.h"
-
+#include "renderer/path_tracing_renderer.h"
 
 int main(){
     
     Film film {192 * 4,108 * 4};
-    film.resize(1920, 1080);
+    //film.resize(1920, 1080);
     Camera camera { film, { -12, 5, -12 }, { 0, 0, 0 }, 45 };
     Sphere sphere{
         {0,0,0},
@@ -60,16 +60,19 @@ int main(){
     scene.addShape(plane, { RGB(120, 204, 157) }, { 0, -0.5, 0 });
     scene.build();
 
-    NormalRenderer normal_renderer {camera, scene};
-    normal_renderer.render(1, "../../normal.ppm");
+    // NormalRenderer normal_renderer {camera, scene};
+    // normal_renderer.render(1, "../../normal.ppm");
 
     // BoundsTestCountRenderer btc_renderer { camera, scene };
     // btc_renderer.render(1, "../../BTC.ppm");
     // TriangleTestCountRenderer ttc_renderer { camera, scene };
     // ttc_renderer.render(1, "../../TTC.ppm");
 
-    SimpleRTRenderer simple_renderer {camera, scene};
-    simple_renderer.render(128, "../../simple.ppm");
+    // SimpleRTRenderer simple_renderer {camera, scene};
+    // simple_renderer.render(128, "../../simple.ppm");
+
+    PathTracingRenderer path_tracing_renderer {camera, scene};
+    path_tracing_renderer.render(128, "../../path_tracing.ppm");
 
 }
 

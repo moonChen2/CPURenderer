@@ -1,5 +1,6 @@
 #include "renderer/path_tracing_renderer.h"
 
+#include "sample/spherical.h"
 #include "util/frame.h"
 
 
@@ -16,7 +17,7 @@ glm::vec3 PathTracingRenderer::renderPixel(const glm::ivec2 &pixel_coord) {
                 break;
             }
             L += beta * hit_info->material->emissive;
-
+            beta *= hit_info->material->albedo / q;
             Frame frame(hit_info->normal);
             glm::vec3 light_direction;
 
@@ -28,27 +29,21 @@ glm::vec3 PathTracingRenderer::renderPixel(const glm::ivec2 &pixel_coord) {
                 // 局部坐标系下
                 // glm::dot(light_direction, glm::vec3(0, 1, 0)) = light_direction.y
                 // beta *= brdf * light_direction.y / pdf;
-                beta *= hit_info->material->albedo;
+                //beta *= hit_info->material->albedo;
             }else {
-                do {
-                    light_direction = { rng.uniform(), rng.uniform(), rng.uniform() };
-                    // 0,1 -> -1,1
-                    light_direction = light_direction * 2.f - 1.f;
-                } while(glm::length(light_direction) > 1);
-                if (light_direction.y < 0) {
-                    light_direction.y = -light_direction.y;
-                }
                 // pdf = 1 / 2pi;
                 // brdf = hit_info->material->albedo / pi;
-                // 后面有brdf/pdf 所以pi会消掉
-                // pdf = 0.5;
-                // brdf = hit_info->material->albedo;
                 // beta *= brdf * light_direction.y / pdf;
-                light_direction = glm::normalize(light_direction);
-                beta *= hit_info->material->albedo * light_direction.y * 2.f;
+                // beta *= hit_info->material->albedo * light_direction.y * 2.f;
+
+                // Cosine Weight
+                // pdf = light_direction.y / pi
+                // brdf = hit_info->material->albedo / pi
+                light_direction = CosineSampleHemisphere( {rng.uniform(), rng.uniform()});
+                //beta *= hit_info->material->albedo;
             }
 
-            beta /= q;
+            //beta /= q;
 
             ray.origin = hit_info->hit_point;
             ray.direction = frame.worldFromLocal(light_direction);

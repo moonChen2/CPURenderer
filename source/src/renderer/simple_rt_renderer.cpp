@@ -1,4 +1,6 @@
 #include "renderer/simple_rt_renderer.h"
+
+#include "sample/spherical.h"
 #include "util/frame.h"
 
 //1 spp
@@ -25,15 +27,7 @@ glm::vec3 SimpleRTRenderer::renderPixel(const glm::ivec2 &pixel_coord) {
                 light_direction = { -view_direction.x, view_direction.y, -view_direction.z };
             } else {
                 //diffuse
-                //accept or refuse
-                do {
-                    light_direction = { rng.uniform(), rng.uniform(), rng.uniform() };
-                    // 0,1 -> -1,1
-                    light_direction = light_direction * 2.f - 1.f;
-                } while(glm::length(light_direction) > 1);
-                if (light_direction.y < 0) {
-                    light_direction.y = -light_direction.y;
-                }
+                light_direction = UniformSampleHemisphere(rng);
             }
             ray.direction = frame.worldFromLocal(light_direction);
         }else break;

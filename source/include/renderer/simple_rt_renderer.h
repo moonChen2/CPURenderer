@@ -1,5 +1,5 @@
-#pragma once
-
-#include "base_renderer.h"
-
-DEFINE_RENDERER(SimpleRT)
+// #pragma once
+//
+// #include "base_renderer.h"
+//
+// DEFINE_RENDERER(SimpleRT)

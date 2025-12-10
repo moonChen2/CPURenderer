@@ -3,10 +3,11 @@
 
 #include "bounds.h"
 #include "shape/shape.h"
+#include "material/material.h"
 
 struct ShapeInstance {
     const Shape &shape;
-    Material material;
+    Material const *material;
     glm::mat4 world_from_object;
     glm::mat4 object_from_world;
 

@@ -1,7 +1,5 @@
 #include "thread/thread_pool.h"
-
 #include <cmath>
-
 #include "util/profile.h"
 
 ThreadPool thread_pool {};

@@ -16,11 +16,11 @@ public:
         gen.seed(seed);
     }
 
-    float uniform() {
+    float uniform() const{
         return uniform_distribution(gen);
     }
 
 private:
-    std::mt19937 gen;
-    std::uniform_real_distribution<float> uniform_distribution {0, 1 };
+    mutable std::mt19937 gen;
+    mutable std::uniform_real_distribution<float> uniform_distribution {0, 1 };
 };

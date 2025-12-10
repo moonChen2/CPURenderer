@@ -4,21 +4,21 @@
 constexpr float PI = 3.14159265359;
 inline glm::vec2 UniformSampleUnitDisk(glm::vec2 const &u) {
 
-    float r = sqrt(u.x);
+    float r = glm::sqrt(u.x);
     float theta =  2 * PI * u.y;
 
     return {r * glm::cos(theta), r * glm::sin(theta)};
 }
 
 inline glm::vec3 CosineSampleHemisphere(glm::vec2 const &u) {
-    float r = sqrt(u.x);
+    float r = glm::sqrt(u.x);
     float phi =  2 * PI * u.y;;
 
     return {r * glm::cos(phi), glm::sqrt(1 - r * r), r * glm::sin(phi)};
 }
 
 //refuse or accept
-inline glm::vec3 UniformSampleHemisphere(RNG &rng) {
+inline glm::vec3 UniformSampleHemisphere(RNG const &rng) {
     glm::vec3 result;
     do {
         result = { rng.uniform(), rng.uniform(), rng.uniform() };

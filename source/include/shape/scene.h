@@ -8,12 +8,12 @@
 struct Scene : public Shape{
 public:
     void addShape(const Shape &shape,
-        const Material &material = {},
-        const glm::vec3 &pos = {0.0f, 0.0f, 0.0f},
-        const glm::vec3 &scale = {1.0f, 1.0f, 1.0f},
-        const glm::vec3 &rot = {0.0f, 0.0f, 0.0f});
+        Material const *material = nullptr,
+        glm::vec3 const &pos = {0.0f, 0.0f, 0.0f},
+        glm::vec3 const &scale = {1.0f, 1.0f, 1.0f},
+        glm::vec3 const &rotate = {0.0f, 0.0f, 0.0f});
 
-    std::optional<HitInfo> intersect(const Ray &ray,
+    std::optional<HitInfo> intersect(Ray const &ray,
         float t_min = 1e-5,
         float t_max = std::numeric_limits<float>::infinity()) const override;
 

@@ -4,13 +4,14 @@
 #include "shape/plane.h"
 #include "shape/scene.h"
 #include "shape/model.h"
+#include "material/diffuse_material.h"
+#include "material/specular_material.h"
 #include "renderer/normal_renderer.h"
-#include "renderer/simple_rt_renderer.h"
 #include "renderer/debug_renderer.h"
 #include "renderer/path_tracing_renderer.h"
 
 int main(){
-    
+
     Film film {192 * 4,108 * 4};
     //film.resize(1920, 1080);
     Camera camera { film, { -12, 5, -12 }, { 0, 0, 0 }, 45 };
@@ -34,9 +35,15 @@ int main(){
         };
         float u = rng.uniform();
         if (u < 0.9) {
+            Material *material;
+            if (rng.uniform() > 0.5) {
+                material = new DiffuseMaterial { RGB(202, 159, 117) };
+            } else {
+                material = new SpecularMaterial { RGB(202, 159, 117) };
+            }
             scene.addShape(
                 model,
-                { RGB(202, 159, 117), rng.uniform() > 0.5 },
+                material,
                 random_pos,
                 { 1, 1, 1 },
                 { rng.uniform() * 360, rng.uniform() * 360, rng.uniform() * 360 }
@@ -44,20 +51,22 @@ int main(){
         } else if (u < 0.95) {
             scene.addShape(
                 sphere,
-                { { rng.uniform(), rng.uniform(), rng.uniform() }, true },
+                new SpecularMaterial { { rng.uniform(), rng.uniform(), rng.uniform() } },
                 random_pos,
                 { 0.4, 0.4, 0.4 }
             );
         } else {
             random_pos.y += 6;
+            auto *material = new DiffuseMaterial { { 0, 0, 0 } };
+            material->setEmissive({ rng.uniform() * 4, rng.uniform() * 4, rng.uniform() * 4 });
             scene.addShape(
                 sphere,
-                { { 1, 1, 1 }, false, { rng.uniform() * 4, rng.uniform() * 4, rng.uniform() * 4 } },
+                material,
                 random_pos
             );
         }
     }
-    scene.addShape(plane, { RGB(120, 204, 157) }, { 0, -0.5, 0 });
+    scene.addShape(plane, new DiffuseMaterial { RGB(120, 204, 157) }, { 0, -0.5, 0 });
     scene.build();
 
     // NormalRenderer normal_renderer {camera, scene};
@@ -67,9 +76,6 @@ int main(){
     // btc_renderer.render(1, "../../BTC.ppm");
     // TriangleTestCountRenderer ttc_renderer { camera, scene };
     // ttc_renderer.render(1, "../../TTC.ppm");
-
-    // SimpleRTRenderer simple_renderer {camera, scene};
-    // simple_renderer.render(128, "../../simple.ppm");
 
     PathTracingRenderer path_tracing_renderer {camera, scene};
     path_tracing_renderer.render(128, "../../path_tracing.ppm");

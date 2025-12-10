@@ -1,6 +1,6 @@
 #pragma once
 #include "thirdParty/glm/glm.hpp"
-#include "shape/material.h"
+#include "material/material.h"
 #include "util/debug_marco.h"
 struct Ray {
     glm::vec3 origin;

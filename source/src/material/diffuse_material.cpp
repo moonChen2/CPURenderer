@@ -1,7 +1,7 @@
 #include "material/diffuse_material.h"
 #include "sample/spherical.h"
 
-glm::vec3 DiffuseMaterial::sampleBRDF(glm::vec3 const &view_direction, glm::vec3 &beta, RNG const &rng) const {
+glm::vec3 DiffuseMaterial::sampleBSDF(glm::vec3 const &hit_point, glm::vec3 const &view_direction, glm::vec3 &beta, RNG const &rng) const {
     // pdf = 1 / 2pi;
     // brdf = hit_info->material->albedo / pi;
     // beta *= brdf * light_direction.y / pdf;

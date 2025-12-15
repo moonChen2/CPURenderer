@@ -5,7 +5,7 @@
 
 class Material {
 public:
-    virtual glm::vec3 sampleBRDF(glm::vec3 const &view_direction, glm::vec3 &beta, RNG const &rng) const = 0;
+    virtual glm::vec3 sampleBSDF(glm::vec3 const &hit_point, glm::vec3 const &view_direction, glm::vec3 &beta, RNG const &rng) const = 0;
     void setEmissive(glm::vec3 const &emissive){ this->emissive = emissive; }
 
 public:

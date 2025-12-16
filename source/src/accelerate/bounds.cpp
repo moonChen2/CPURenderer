@@ -14,7 +14,8 @@ bool Bounds::hasIntersection(const Ray &ray, float t_min, float t_max) const{
     //最早离开时间
     float far = glm::min(tmax.x, glm::min(tmax.y, tmax.z));
 
-    if (near <= t_min && t_max <= far) return false;
+    // Lecture 15 Fixed
+    //if (near <= t_min && t_max <= far) return false;
 
     near = glm::max(near, t_min);
     far = glm::min(far, t_max);
@@ -36,7 +37,8 @@ bool Bounds::hasIntersection(const Ray &ray, const glm::vec3 &inv_direction, flo
     //最早离开时间
     float far = glm::min(tmax.x, glm::min(tmax.y, tmax.z));
 
-    if (near <= t_min && t_max <= far) return false;
+    // Lecture 15 Fixed
+    //if (near <= t_min && t_max <= far) return false;
 
     near = glm::max(near, t_min);
     far = glm::min(far, t_max);

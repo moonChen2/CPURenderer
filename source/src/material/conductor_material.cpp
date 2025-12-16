@@ -1,10 +1,7 @@
 #include "material/conductor_material.h"
 #include "util/complex.h"
 
-glm::vec3 ConductorMaterial::sampleBSDF(
-        const glm::vec3 &hit_point, const glm::vec3 &view_direction,
-        glm::vec3 &beta, const RNG &rng) const {
-
+std::optional<BSDFSample> ConductorMaterial::sampleBSDF(const glm::vec3 &hit_point, const glm::vec3 &view_direction, const RNG &rng) const {
     glm::vec3 fr {};
     for (size_t i = 0; i < 3; i ++) {
         Complex etat_div_etai { ior[i], k[i] };
@@ -19,9 +16,12 @@ glm::vec3 ConductorMaterial::sampleBSDF(
         fr[i] = 0.5 * (norm(r_parl) + norm(r_perp));
     }
 
-    //吸收一部分
-    beta *= fr;
-
     //导体只会发生镜面反射
-    return { -view_direction.x, view_direction.y, -view_direction.z };
+    glm::vec3 light_direction {-view_direction.x, view_direction.y, -view_direction.z };
+    //吸收一部分
+    glm::vec3 bsdf = fr / glm::abs(light_direction.y) ;
+    float pdf = 1;
+
+
+    return BSDFSample{ bsdf, pdf, light_direction };
 }

@@ -2,14 +2,13 @@
 
 #include "camera/camera.h"
 #include "shape/scene.h"
-#include "util/rng.h"
 
 #define DEFINE_RENDERER(Name) \
     class Name##Renderer : public BaseRenderer { \
     public: \
         Name##Renderer(Camera &camera, const Scene &scene) : BaseRenderer(camera, scene) {} \
     private: \
-        glm::vec3 renderPixel(const glm::ivec2 &pixel_coord) override; \
+        glm::vec3 renderPixel(const glm::ivec3 &pixel_coord) override; \
     }; \
 
 
@@ -21,9 +20,9 @@ public:
 
     void render(size_t spp, const std::filesystem::path &filename);
 private:
-    virtual glm::vec3 renderPixel(const glm::ivec2 &pixel_coord) = 0;
+    // ivec3 = x y ssp
+    virtual glm::vec3 renderPixel(const glm::ivec3 &pixel_coord) = 0;
 protected:
     Camera &camera;
     const Scene &scene;
-    RNG rng {};
 };

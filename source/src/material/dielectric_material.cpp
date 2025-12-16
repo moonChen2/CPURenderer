@@ -15,7 +15,7 @@ float Fresnel(float etai_div_etat, float cos_theta_t, float &cos_theta_i){
     return 0.5 * (r_parl * r_parl + r_perp * r_perp);
 }
 
-glm::vec3 DielectricMaterial::sampleBSDF(glm::vec3 const &hit_point, const glm::vec3 &view_direction, glm::vec3 &beta, const RNG &rng) const {
+std::optional<BSDFSample> DielectricMaterial::sampleBSDF(glm::vec3 const &hit_point, const glm::vec3 &view_direction, const RNG &rng) const {
     //etai_div_etat = ni / nt
     float etai_div_etat = ior;
     glm::vec3 normal = {0,1,0};
@@ -29,18 +29,23 @@ glm::vec3 DielectricMaterial::sampleBSDF(glm::vec3 const &hit_point, const glm::
     float cos_theta_i;
     float fr = Fresnel(etai_div_etat, cos_theta_t, cos_theta_i);
 
-    // 反射
+    // think,
+    // 反射 glm::abs(light_direction.y)加绝对值的原因
     if(rng.uniform() <= fr){
-        beta *= albedo_r;
-        return glm::vec3 { -view_direction.x, view_direction.y, -view_direction.z};
+        glm::vec3 light_direction { -view_direction.x, view_direction.y, -view_direction.z};
+        glm::vec3 bsdf = albedo_r / glm::abs(light_direction.y) ;
+        float pdf = 1;
+        return BSDFSample { bsdf, pdf, light_direction};
     }else{
         // 折射
         // btdf非对称性导致有个分母
-        beta *= albedo_t / (etai_div_etat * etai_div_etat);
+        // beta *= albedo_t / (etai_div_etat * etai_div_etat);
 
-        return glm::vec3 {
-                (-view_direction / etai_div_etat) +
-                (cos_theta_t / etai_div_etat - cos_theta_i) * normal
+        glm::vec3 light_direction {
+                (-view_direction / etai_div_etat) + (cos_theta_t / etai_div_etat - cos_theta_i) * normal
         };
+        glm::vec3 bsdf = albedo_t / glm::abs(light_direction.y) ;
+        float pdf = 1;
+        return BSDFSample { bsdf, pdf, light_direction};
     }
 }

@@ -174,3 +174,9 @@ int main(){
 
 //render 100 shape instances scene with scene BVH
 //Profile "Render 128spp ../../simple.ppm": 3993 ms
+
+//None thread local RNG MacOS
+//Profile "Render 128spp ../../path_tracing.ppm": 9401 ms
+
+//thread local RNG MacOS
+//Profile "Render 128spp ../../path_tracing.ppm": 6498 ms
